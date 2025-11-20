@@ -7,24 +7,143 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"User": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"created_at": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"created_at"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ErrorResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"details": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CreateUserRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateUserRequest": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": true
+			},
 			"Todo": {
 				"properties": {
 					"id": {
 						"type": "number",
 						"format": "double"
 					},
+					"user_id": {
+						"type": "number",
+						"format": "double"
+					},
 					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"completed": {
+						"type": "boolean"
+					},
+					"created_at": {
+						"type": "string"
+					},
+					"updated_at": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"user_id",
+					"title",
+					"completed",
+					"created_at",
+					"updated_at"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"CreateTodoRequest": {
+				"properties": {
+					"user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user_id",
+					"title"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"UpdateTodoRequest": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
 						"type": "string"
 					},
 					"completed": {
 						"type": "boolean"
 					}
 				},
-				"required": [
-					"id",
-					"title",
-					"completed"
-				],
 				"type": "object",
 				"additionalProperties": true
 			}
@@ -36,12 +155,282 @@
 		"contact": {}
 	},
 	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "ListUsers",
+				"responses": {
+					"200": {
+						"description": "Users retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/User"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all users with optional pagination",
+				"security": [],
+				"parameters": [
+					{
+						"description": "Maximum number of users to return",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 100,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Number of users to skip",
+						"in": "query",
+						"name": "offset",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"201": {
+						"description": "User created successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new user",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "User creation data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserRequest",
+								"description": "User creation data"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{id}": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "User retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a specific user by ID",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User ID",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"200": {
+						"description": "User updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update an existing user",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User ID",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "User update data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUserRequest",
+								"description": "User update data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"204": {
+						"description": "User deleted successfully"
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a user",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User ID",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/todos": {
 			"get": {
 				"operationId": "ListTodos",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Todos retrieved successfully",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -52,16 +441,69 @@
 								}
 							}
 						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
 					}
 				},
+				"description": "Get all todos with optional filtering",
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"description": "Filter by user ID",
+						"in": "query",
+						"name": "user_id",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Filter by completion status",
+						"in": "query",
+						"name": "completed",
+						"required": false,
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"description": "Maximum number of todos to return",
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"default": 100,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Number of todos to skip",
+						"in": "query",
+						"name": "offset",
+						"required": false,
+						"schema": {
+							"default": 0,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			},
 			"post": {
 				"operationId": "CreateTodo",
 				"responses": {
-					"200": {
-						"description": "Ok",
+					"201": {
+						"description": "Todo created successfully",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -69,24 +511,39 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Invalid request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
 					}
 				},
+				"description": "Create a new todo",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "Todo creation data",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"properties": {
-									"title": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"title"
-								],
-								"type": "object"
+								"$ref": "#/components/schemas/CreateTodoRequest",
+								"description": "Todo creation data"
 							}
 						}
 					}
@@ -98,30 +555,203 @@
 				"operationId": "GetTodo",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Todo retrieved successfully",
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/Todo"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/Todo"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Todo not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
 								}
 							}
 						}
 					}
 				},
+				"description": "Get a specific todo by ID",
 				"security": [],
 				"parameters": [
 					{
+						"description": "Todo ID",
 						"in": "path",
 						"name": "id",
 						"required": true,
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateTodo",
+				"responses": {
+					"200": {
+						"description": "Todo updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Todo"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Todo not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update an existing todo",
+				"security": [],
+				"parameters": [
+					{
+						"description": "Todo ID",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Todo update data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateTodoRequest",
+								"description": "Todo update data"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTodo",
+				"responses": {
+					"204": {
+						"description": "Todo deleted successfully"
+					},
+					"404": {
+						"description": "Todo not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete a todo",
+				"security": [],
+				"parameters": [
+					{
+						"description": "Todo ID",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/todos/user/{userId}": {
+			"get": {
+				"operationId": "GetUserTodos",
+				"responses": {
+					"200": {
+						"description": "User todos retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Todo"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all todos for a specific user",
+				"security": [],
+				"parameters": [
+					{
+						"description": "User ID",
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "Filter by completion status",
+						"in": "query",
+						"name": "completed",
+						"required": false,
+						"schema": {
+							"type": "boolean"
 						}
 					}
 				]

@@ -1,7 +1,7 @@
 {
   "entryFile": "src/server.ts",
   "controllerPathGlobs": ["src/controllers/**/*.ts"],
-  "noImplicitAdditionalProperties": "throw",
+  "noImplicitAdditionalProperties": "ignore",
 
   "spec": {
     "specVersion": 3,

@@ -22,7 +22,7 @@ app.get("/", (_, res) => {
   res.send("TSOA Todo API");
 });
 
-const port = 3000;
+const port = 9000;
 app.listen(port, () =>
   console.log(`Server running at http://localhost:${port}`)
 );

@@ -12,13 +12,15 @@
   "scripts": {
     "start": "bun run src/server.ts",
     "build": "tsoa routes",
-    "dev": "bun run src/server.ts --watch"
+    "dev": "bun run --hot  src/server.ts "
   },
   "dependencies": {
+    "@tsoa/runtime": "^6.6.0",
     "@types/swagger-ui-express": "^4.1.8",
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "install": "^0.13.0",
+    "joi": "^18.0.2",
     "swagger-ui-express": "^5.0.1",
     "tsoa": "^6.6.0"
   }
