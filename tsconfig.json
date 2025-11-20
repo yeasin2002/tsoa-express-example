@@ -8,7 +8,9 @@
     "outDir": "dist",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false, 
+    "allowImportingTsExtensions": true
+
   },
   "include": ["src"]
 }

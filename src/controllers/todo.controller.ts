@@ -115,6 +115,7 @@ export class TodoController extends Controller {
 
       const query = db.query<Todo, any[]>(sql);
       return query.all(...params);
+      // oxlint-disable-next-line no-unused-vars
     } catch (error) {
       this.setStatus(500);
       throw new Error("Failed to retrieve user todos");
